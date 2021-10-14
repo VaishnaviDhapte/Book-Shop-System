@@ -1,0 +1,81 @@
+Create Table Admin(A_Mail_Id varchar2(30) PRIMARY KEY,
+		A_Name varchar2(50) NOT NULL,
+		Password varchar2(30),
+		A_Mobile number(10) NOT NULL,
+		RegDate date); 
+
+insert into Admin values('vaishnavidhapte8@gmail.com','Vaishnavi','SKY@2021',7517440307, TO_Date('19/08/2021','dd/mm/yyyy'));
+
+select * from Admin
+
+#############################################################################################################################
+
+Create Table Employee(E_E_Mail_Id varchar2(30) PRIMARY KEY,
+                        E_Name varchar2(30) NOT NULL,
+                        E_Mobile number(10) NOT NULL,
+                        E_Gender varchar2(30) NOT NULL,
+                        E_Address varchar2(30) NOT NULL,
+                        E_Password varchar2(30),
+                        E_RegDate date);
+
+insert into Employee values('virajdhapte904@gmail.com','Viraj',9309730643,'Male','Shubham Park Housing Society','Viraj@18', TO_Date('20/08/2021','dd,mm,yy'));
+
+select * from Employee
+
+
+###############################################################################################################################################################
+
+Create Table Customer( Name varchar2(50) NOT NULL,
+                      Mobile number(13) PRIMARY KEY,
+                      Email varchar2(50),
+                      RegDate date);
+
+
+insert into Customer values('Tarachand','+917218843049','tarachanddhapte@gmail.com',TO_Date('17/08/2021','dd,mm,yyyy'));
+
+select * from Customer
+
+
+###################################################################################################################
+
+Create Table Book(B_Barcode varchar2(20) PRIMARY KEY,ISBN number(13) NOT NULL,B_Name varchar2(50) NOT NULL,Author varchar2(50) NOT NULL,Publication varchar2(50) NOT NULL,Publi_Year number(4),Language varchar2(30),Price number(8) NOT NULL,B_RegDate date NOT NULL);
+
+
+
+insert into Book values('MCA131415',1156249856565,'JAVA SE','Kathy Sierra','Oracle Indian Edition',2014,'English',2000,TO_DATE('21/08/2021','dd/mm/yyyy'));
+
+
+insert into Book values('MCA152259',8962566341225,'Python','Mehul Patel','Red Shine',2016,'English',653,TO_DATE('21/08/2021','dd/mm/yyyy'));
+
+
+############################################################
+CREATE SEQUENCE seq_sold
+MINVALUE 1
+START WITH 1
+INCREMENT BY 1
+CACHE 10;
+
+create table sold(sold_id number(8) PRIMARY KEY, barcode varchar2(20), cust_no varchar2(13), sold_date date);
+
+insert into sold values(seq_sold.nextval, 'MCA567234', 'MCA567234', TO_DATE('14/10/2021','dd/mm/yyyy'));
+
+################################################################
+CREATE SEQUENCE seq_payment
+MINVALUE 1
+START WITH 1
+INCREMENT BY 1
+CACHE 10;
+
+
+create table payment(
+pay_id number(8) PRIMARY KEY, 
+book_price number(8), 
+tax number(8), 
+gst number(8), 
+total number(8),
+sold_id number(8), 
+CONSTRAINT fk_sold_id FOREIGN KEY (sold_id) REFERENCES sold(sold_id)
+);
+
+insert into payment values(seq_payment.nextval, 200, 200.453, 29.37, 2011, 1);
+
