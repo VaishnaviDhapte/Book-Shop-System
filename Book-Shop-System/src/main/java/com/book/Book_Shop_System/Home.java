@@ -104,7 +104,7 @@ public class Home implements Runnable {
 			jsp.setViewportView(bookTable);
 			model = (DefaultTableModel) bookTable.getModel();
 			Connection con = ConnectionProvider.getCon();
-			PreparedStatement pst = con.prepareStatement("select * from book");
+			PreparedStatement pst = con.prepareStatement("select * from book where not exists (select barcode from sold where sold.barcode = book.b_barcode)");
 			ResultSet rs = pst.executeQuery();
 			while(rs.next()) {
 				model.addRow(new Object[] {rs.getString("b_barcode"),rs.getString("isbn"),rs.getString("b_name"),rs.getString("author"),rs.getString("publication"),rs.getString("publi_year"),rs.getString("language"),rs.getString("price")});
