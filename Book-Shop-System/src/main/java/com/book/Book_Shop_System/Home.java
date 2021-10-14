@@ -26,6 +26,9 @@ import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JTable;
 import java.awt.event.MouseAdapter;
@@ -53,7 +56,10 @@ public class Home implements Runnable {
 	private JTextField taxTxt;
 	private JTextField totalPriceTxt;
 	private JTextField totalTxt;
+	private SimpleDateFormat dateFormat;
+	private Date regDate;
 	private double totalPrice = 0.0d;
+	private String cust_contact_id = "None";
 	
 	/**
 	 * Launch the application.
@@ -149,6 +155,9 @@ public class Home implements Runnable {
 		frame.setBounds(100, 100, 1385, 746);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
+		
+		regDate = new Date();
+		dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		
 		JPanel panel1 = new JPanel();
 		panel1.setBackground(new Color(240, 248, 255));
@@ -356,6 +365,7 @@ public class Home implements Runnable {
 						totalTxt.setText(totalPrice + "");
 						taxTxt.setText((totalPrice*0.11)+"");
 						gstTxt.setText((totalPrice*0.12)+"");
+						totalPriceTxt.setText((totalPrice + (totalPrice*0.11) + (totalPrice*0.12)) + "");
 						
 					}else {
 						JOptionPane.showMessageDialog(null, "Sorry, this book already exists in the cart...");
@@ -399,6 +409,7 @@ public class Home implements Runnable {
 						Connection con = ConnectionProvider.getCon();
 						PreparedStatement pst = con.prepareStatement("select * from customer where mobile=?");
 						pst.setString(1,(contactTxt.getText()));
+						cust_contact_id = contactTxt.getText().trim();
 						ResultSet rs = pst.executeQuery();
 						if(rs.next()) {
 							cNameLbl.setText(rs.getString("name"));
@@ -482,6 +493,7 @@ public class Home implements Runnable {
 					totalTxt.setText(totalPrice + "");
 					taxTxt.setText((totalPrice*0.11)+"");
 					gstTxt.setText((totalPrice*0.12)+"");
+					totalPriceTxt.setText((totalPrice + (totalPrice*0.11) + (totalPrice*0.12)) + "");
 				}else
 					JOptionPane.showMessageDialog(null, "Please select book...");
 			}
@@ -511,8 +523,66 @@ public class Home implements Runnable {
 		JButton sellBtn = new JButton("SELL");
 		sellBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				
+				if(cust_contact_id.equals(contactTxt.getText().trim()))
+				{
+					int status = JOptionPane.showConfirmDialog(null,"Are you sure you want to Sell these books?","Confirm",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE);
+					if(status == JOptionPane.YES_OPTION)
+					{
+						try {
+							Connection con = ConnectionProvider.getCon();
+							int record_count = 0;
+							int n = model2.getRowCount();
+							for(int i=0; i<n;i++) {
+								String barcode = model2.getValueAt(0, 0).toString();
+								
+								PreparedStatement pst = con.prepareStatement("insert into sold values(seq_sold.nextval, ?, ?,TO_DATE('"+dateFormat.format(regDate)+"','YYYY/MM/DD'))");
+								pst.setString(1, barcode);
+								pst.setString(2,cust_contact_id);
+								
+								int ans = pst.executeUpdate();
+								
+								record_count++;
+								if(ans > 0) {
+									PreparedStatement get_sold_id = con.prepareStatement("select sold_id from sold where barcode=?");
+									get_sold_id.setString(1,barcode);
+									ResultSet rs = get_sold_id.executeQuery();
+									if(rs.next()) {
+										int sold_id = Integer.parseInt(rs.getString("SOLD_ID"));
+										
+										PreparedStatement pstPayment = con.prepareStatement("insert into payment values(seq_payment.nextval,?,?,?,?,?)");
+										double bPrice = Double.parseDouble(model2.getValueAt(0, 3).toString());
+										double btax = bPrice * 0.11;
+										double bgst = bPrice * 0.12;
+										double btotal = bPrice + btax + bgst;
+										pstPayment.setDouble(1,bPrice);
+										pstPayment.setDouble(2, btax);
+										pstPayment.setDouble(3, bgst);
+										pstPayment.setDouble(4, btotal);
+										pstPayment.setInt(5, sold_id);
+										
+										pstPayment.executeUpdate();
+									}
+									model2.removeRow(0);
+								}
+							}
+							
+							JOptionPane.showMessageDialog(null,record_count+" Books Sold Successfully" );
+							jTableTo();
+							contactTxt.setText("");
+							cNameLbl.setText("");
+							cEmailLbl.setText("");
+							taxTxt.setText("");
+							gstTxt.setText("");
+							totalPriceTxt.setText("");
+							totalTxt.setText("");
+							totalPrice = 0.0d;
+							cust_contact_id = "None";
+							
+						}catch(Exception ex) { JOptionPane.showMessageDialog(null, ex); }
+					}
+				}else {
+					JOptionPane.showMessageDialog(null, "Please Select Customer who wants to buy the books.");
+				}
 			}
 		});
 		sellBtn.setFont(new Font("Verdana", Font.PLAIN, 14));
