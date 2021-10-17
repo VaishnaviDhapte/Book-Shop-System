@@ -227,7 +227,7 @@ public class CustomerForm {
 				}
 			}
 		});
-		updateBtn.setBounds(303, 280, 110, 35);
+		updateBtn.setBounds(257, 280, 110, 35);
 		frame.getContentPane().add(updateBtn);
 		
 		JButton clearBtn = new JButton("CLEAR");
@@ -240,7 +240,18 @@ public class CustomerForm {
 				emailTxt.setText("");
 			}
 		});
-		clearBtn.setBounds(488, 280, 100, 35);
+		clearBtn.setBounds(410, 280, 100, 35);
 		frame.getContentPane().add(clearBtn);
+		
+		JButton closeBtn = new JButton("CLOSE");
+		closeBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.dispose();
+			}
+		});
+		closeBtn.setFont(new Font("Verdana", Font.PLAIN, 18));
+		closeBtn.setBackground(new Color(139, 0, 139));
+		closeBtn.setBounds(554, 280, 100, 35);
+		frame.getContentPane().add(closeBtn);
 	}
 }
