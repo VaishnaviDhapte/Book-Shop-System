@@ -107,7 +107,7 @@ public class Home implements Runnable {
 	private void jTableTo() {
 		try {
 			bookTable.setModel(new DefaultTableModel(new Object[][] {}, new String[] {"Barcode","ISBN","Book Name","Author","Publication","Publication Year","Language","Price"}));
-			jsp.setViewportView(bookTable);
+		/*	jsp.setViewportView(bookTable);
 			model = (DefaultTableModel) bookTable.getModel();
 			Connection con = ConnectionProvider.getCon();
 			PreparedStatement pst = con.prepareStatement("select * from book where not exists (select barcode from sold where sold.barcode = book.b_barcode)");
@@ -115,14 +115,14 @@ public class Home implements Runnable {
 			while(rs.next()) {
 				model.addRow(new Object[] {rs.getString("b_barcode"),rs.getString("isbn"),rs.getString("b_name"),rs.getString("author"),rs.getString("publication"),rs.getString("publi_year"),rs.getString("language"),rs.getString("price")});
 			}
-	/**/ 	}catch(Exception ex) {
+	*/ 	}catch(Exception ex) {
 			JOptionPane.showMessageDialog(null, ex);
 		}
 	}
 	private void searchBook(ResultSet rs) {
 		try {
 			
-			model = (DefaultTableModel) bookTable.getModel();
+	/*		model = (DefaultTableModel) bookTable.getModel();
 			do {
 				model.addRow(new Object[] {rs.getString("b_barcode"),rs.getString("isbn"),rs.getString("b_name"),rs.getString("author"),rs.getString("publication"),rs.getString("publi_year"),rs.getString("language"),rs.getString("price")});
 			}while(rs.next());
@@ -134,7 +134,7 @@ public class Home implements Runnable {
 	private void addBook() {
 		try {
 			selectedBookTable.setModel(new DefaultTableModel(new Object[][] {}, new String[] {"Barcode","Book Name","Author","Price"}));
-			jsp2.setViewportView(selectedBookTable);
+	/*		jsp2.setViewportView(selectedBookTable);
 			model2 = (DefaultTableModel) selectedBookTable.getModel();
 	/*  	Connection con = ConnectionProvider.getCon();
 			PreparedStatement pst = con.prepareStatement("select * from book");
@@ -629,7 +629,7 @@ public class Home implements Runnable {
 		JMenu mnNewMenu = new JMenu("Book");
 		menuBar.add(mnNewMenu);
 		
-		JMenuItem mntmNewMenuItem = new JMenuItem("Add Book");
+		JMenuItem mntmNewMenuItem = new JMenuItem("Book Transaction");
 		mntmNewMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Book book = new Book(); 
@@ -638,8 +638,22 @@ public class Home implements Runnable {
 		});
 		mnNewMenu.add(mntmNewMenuItem);
 		
-		JMenuItem mntmNewMenuItem_1 = new JMenuItem("Sell Book");
-		mnNewMenu.add(mntmNewMenuItem_1);
+		JMenu mnNewMenu_1 = new JMenu("Customer");
+		menuBar.add(mnNewMenu_1);
 		
+		JMenuItem mntmNewMenuItem_1 = new JMenuItem("ADD Customer");
+		mntmNewMenuItem_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CustomerForm window = new CustomerForm();
+				window.main(new String[] {});
+			}
+		});
+		mnNewMenu_1.add(mntmNewMenuItem_1);
+		
+	}
+	private static class __Tmp {
+		private static void __tmp() {
+			  javax.swing.JPanel __wbp_panel = new javax.swing.JPanel();
+		}
 	}
 }
